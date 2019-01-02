@@ -1,11 +1,12 @@
 import os
 import hug
-import authentication
 import core
 
 from base64 import b64encode
 
 
+
+TOKEN = b64encode('{0}:{1}'.format('Emile', '1234').encode('utf8')).decode('utf8')
 
 def test_home_route():
     """ Test home route (actually the root of the api) """
@@ -33,7 +34,7 @@ def test_list_document_by_title():
     cur_path = os.path.dirname(os.path.abspath(__file__))
     doc_path = os.path.join(cur_path, 'test_documents')
 
-    # create a temp file   
+    # create a temp file
     temp_f = open(os.path.join(doc_path, 'test.txt'), 'w')
     temp_f.close()
 
@@ -53,10 +54,9 @@ def test_create_document_without_credentials():
     assert result.status == expected
 
 def test_create_document():
-    token = b64encode('{0}:{1}'.format('Emile', '1234').encode('utf8')).decode('utf8')
     result = hug.test.post(core, '/api/v1/create',
         name='Emile',
-        headers={'Authorization': 'Basic {0}'.format(token)},
+        headers={'Authorization': 'Basic {0}'.format(TOKEN)},
         body={'title': 'title', 'content': 'this is content'}
     )
     expected = hug.HTTP_200
@@ -66,7 +66,7 @@ def test_delete_document():
     cur_path = os.path.dirname(os.path.abspath(__file__))
     doc_path = os.path.join(cur_path, 'test_documents')
 
-    # create a temp file   
+    # create a temp file
     temp_f = open(os.path.join(doc_path, 'test.txt'), 'w')
     temp_f.close()
 
@@ -74,10 +74,9 @@ def test_delete_document():
 
     assert 'test' in result[0]
 
-    token = b64encode('{0}:{1}'.format('Emile', '1234').encode('utf8')).decode('utf8')
     result = hug.test.delete(core, '/api/v1/delete',
         name='Emile',
-        headers={'Authorization': 'Basic {0}'.format(token)},
+        headers={'Authorization': 'Basic {0}'.format(TOKEN)},
         body={'title': 'test.txt'}
     )
     assert result.status == hug.HTTP_200
@@ -89,18 +88,15 @@ def test_update_document():
     cur_path = os.path.dirname(os.path.abspath(__file__))
     doc_path = os.path.join(cur_path, 'test_documents')
 
-    # create a temp file   
+    # create a temp file
     temp_f = open(os.path.join(doc_path, 'test.txt'), 'w+')
-    temp_f.write("THis is a simple thing")
+    temp_f.write("Now is better than never")
     temp_f.close()
 
-    import pdb; pdb.set_trace()
-
-    token = b64encode('{0}:{1}'.format('Emile', '1234').encode('utf8')).decode('utf8')
-    result = hug.test.patch(core, '/api/v1/patch',
+    result = hug.test.patch(core, '/api/v1/update',
         name='Emile',
-        headers={'Authorization': 'Basic {0}'.format(token)},
-        body={'title': 'test.txt', 'content': 'updated content'}
+        headers={'Authorization': 'Basic {0}'.format(TOKEN)},
+        body={'title': 'test', 'content': 'updated content'}
     )
     assert result.status == hug.HTTP_200
 
