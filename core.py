@@ -16,6 +16,9 @@ def home():
 @hug.get('/list/all', version=1)
 def list_document():
     """ List all documents """
+    # This should not be here anymore
+    documents_dir = os.listdir(_DOCUMENT_PATH)
+
     files = {}
     for doc in documents_dir:
         with open(os.path.join(_DOCUMENT_PATH, doc), 'r') as f:
